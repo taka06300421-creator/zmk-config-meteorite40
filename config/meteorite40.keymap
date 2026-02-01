@@ -1,166 +1,53 @@
 #include <behaviors.dtsi>
-#include <dt-bindings/zmk/bt.h>
 #include <dt-bindings/zmk/keys.h>
-#include <behaviors/custom_config.dtsi>
-#include <dt-bindings/zmk/custom_config.h>
+#include <dt-bindings/zmk/bt.h>
+#include <dt-bindings/zmk/mouse.h>
 
-#define ZMK_POINTING_DEFAULT_SCRL_VAL 200
-#include <dt-bindings/zmk/pointing.h>
+/ {
+keymap {
+compatible = "zmk,keymap";
 
-&mt { 
-    flavor = "tap-preferred"; // change hold to tap
-    tapping-term-ms = <200>;
-    quick-tap-ms = <150>; // change 200 to 150
+/* --------------------------------------------------------------------------------
+* Layer 0: 基本 (Base)
+* 左親指: タップでSpace / 長押しでLayer 1 (数字)
+* 右親指: タップでEnter / 長押しでLayer 2 (機能)
+* その他: Windowsキー(&kp LGUI)、左クリック、右クリック
+* -------------------------------------------------------------------------------- */
+default_layer {
+bindings = <
+&kp Q &kp W &kp E &kp R &kp T &kp Y &kp U &kp I &kp O &kp P
+&kp A &kp S &kp D &kp F &kp G &kp H &kp J &kp K &kp L &kp SEMI
+&kp Z &kp X &kp C &kp V &kp B &kp N &kp M &kp COMMA &kp DOT &kp FSLH
+&kp LALT &kp LCTRL &kp LGUI &lt 1 SPACE &mkp LCLK &mkp RCLK &lt 2 ENTER &kp BSPC
+>;
 };
 
-&lt {
-    flavor = "tap-preferred";
-    tapping-term-ms = <150>; // change 200 to 150
-    quick-tap-ms = <150>; // change 200 to 150
+/* --------------------------------------------------------------------------------
+* Layer 1: 数字 & 記号 (左親指ホールド中)
+* 左手: テンキー (789/456/123/0)
+* 右手: 記号類
+* -------------------------------------------------------------------------------- */
+lower_layer {
+bindings = <
+&kp N7 &kp N8 &kp N9 &kp PLUS &kp STAR &kp EXCL &kp AT &kp HASH &kp DLLR &kp PRCNT
+&kp N4 &kp N5 &kp N6 &kp MINUS &kp FSLH &kp CARET &kp AMPS &kp LPAR &kp RPAR &kp DQT
+&kp N1 &kp N2 &kp N3 &kp EQUAL &kp DOT &kp GRAVE &kp LBKT &kp RBKT &kp BSLH &kp UNDER
+&trans &kp N0 &kp DOT &trans &trans &trans &trans &kp DEL
+>;
 };
 
-/ { 
-    behaviors {
-        mouse_scroll: mouse_wheel {
-            compatible = "zmk,behavior-sensor-rotate-var";
-            #sensor-binding-cells = <2>;
-            bindings = <&msc>, <&msc>;
-            tap-ms = <25>;
-        };
-    };
-
-    combos {
-        compatible = "zmk,combos";
-
-        lang1 {
-            bindings = <&kp LANG1>;
-            key-positions = <12 13>; /* D + F */
-            layers = <0>;
-        };
-
-        lang2 {
-            bindings = <&kp LANG2>;
-            key-positions = <16 17>; /* J + K */
-            layers = <0>;
-        };
-
-        esc {
-            bindings = <&kp ESCAPE>;
-            key-positions = <20 21>; /* Z + X */
-            layers = <0>;
-        };
-
-        tab {
-            bindings = <&kp TAB>;
-            key-positions = <0 1>; /* Q + W */
-            layers = <0>;
-        };
-
-        home {
-            bindings = <&kp HOME>;
-            key-positions = <16 17>; /* J + K (on layer 2) */
-            layers = <2>;
-        };
-
-        end {
-            bindings = <&kp END>;
-            key-positions = <18 19>; /* L + - (on layer 2) */
-            layers = <2>;
-        };
-
-        ctrl_home {
-            bindings = <&kp LC(HOME)>;
-            key-positions = <16 18>; /* J + L (on layer 2) */
-            layers = <2>;
-        };
-
-        ctrl_end {
-            bindings = <&kp LC(END)>;
-            key-positions = <17 19>; /* K + - (on layer 2) */
-            layers = <2>;
-        };
-    };
-
-    keymap {
-        compatible = "zmk,keymap";
-        layout = &LAYOUT_2U_SPACE;
-
-        win_default_layer {
-            display-name = "BASE";
-            bindings = <
-                &kp Q        &kp W       &kp E        &kp R        &kp T                                 &kp Y        &kp U       &kp I       &kp O  &kp P
-                &mt LSHIFT A &kp S       &kp D        &kp F        &kp G                                 &kp H        &kp J       &kp K       &kp L  &kp MINUS
-                &kp Z        &kp X       &kp C        &kp V        &kp B        &mkp MB1     &mkp MB2    &kp N        &kp M       &kp COMMA   &kp DOT  &lt 4 SLASH
-                                    &kp LWIN  &mt LCTRL TAB  &mt LSHIFT SPACE  &lt 1 SPACE  &lt 2 ENTER  &lt 2 ENTER  &lt 3 BSPC  &kp RALT
-            >;
-
-            sensor-bindings =
-                <&inc_dec_kp LC(MINUS) LC(EQUAL)>, // RE0: ctrl + - / +,,,
-                <&inc_dec_kp C_VOL_DN C_VOL_UP>; // RE1: volume down/up
-                //<&mouse_scroll SCRL_LEFT SCRL_RIGHT>,
-			    //<&mouse_scroll SCRL_UP SCRL_DOWN>;
-
-        };
-
-        layer_1 {
-            display-name = "SYMBOLS";
-            bindings = <
-                &kp EXCL   &kp AT    &kp HASH  &kp DLLR  &kp PRCNT                       &none      &kp LPAR   &kp RPAR   &kp LBKT   &kp RBKT
-                &kp CARET  &kp AMPS  &kp STAR  &kp BSLH  &kp PIPE                        &kp SEMI   &kp COLON  &kp SQT    &kp DQT    &kp EQUAL
-                &none      &none     &none     &none     &none      &mkp MB4  &mkp MB5   &kp GRAVE  &kp TILDE  &kp LBRC   &kp RBRC   &kp PLUS
-                                     &trans     &trans    &trans    &trans    &trans     &trans    &kp DEL     &trans
-            >;
-
-            sensor-bindings =
-                <&inc_dec_kp LC(MINUS) LC(EQUAL)>, // RE0: ctrl + - / +,,,
-                <&inc_dec_kp C_VOL_DN C_VOL_UP>; // RE1: volume down/up
-                //<&mouse_scroll SCRL_LEFT SCRL_RIGHT>,
-				//<&mouse_scroll SCRL_UP SCRL_DOWN>;
-        };
-
-        layer_2 {
-            display-name = "NUM / ARROW";
-            bindings = <
-                &kp ASTRK        &kp N7     &kp N8     &kp N9     &kp PLUS                        &kp LG(LS(S)) &kp LC(MINUS) &kp LC(EQUAL) &kp C_VOL_DN &kp C_VOL_UP
-                &kp SLASH        &kp N4     &kp N5     &kp N6     &kp MINUS                       &none         &kp LEFT      &kp UP        &kp DOWN     &kp RIGHT
-                &kp N0           &kp N1     &kp N2     &kp N3     &kp DOT   &mkp MB4   &mkp MB5   &none         &kp LG(LEFT)  &kp LG(UP)    &kp LG(DOWN) &kp LG(RIGHT)
-                                        &trans           &trans     &trans     &trans    &trans        &trans  &trans    &trans
-            >;
-
-            sensor-bindings =
-                <&inc_dec_kp LC(MINUS) LC(EQUAL)>, // RE0: ctrl + - / +,,,
-                <&inc_dec_kp C_VOL_DN C_VOL_UP>; // RE1: volume down/up
-
-        };
-
-        layer_3 {
-            display-name = "FUNCTION";
-            bindings = <
-                &kp F1  &kp F2  &kp F3  &kp F4  &kp F5                  &kp F6  &kp F7  &kp F8  &kp F9  &kp F10
-                &none   &none   &none   &none   &none                   &none   &none   &none   &none   &none
-                &none   &none   &none   &none   &none   &none   &none   &none   &none   &none    &none  &none
-                                &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
-            >;
-
-            sensor-bindings =
-                <&inc_dec_kp LC(MINUS) LC(EQUAL)>, // RE0: ctrl + - / +,,,
-                <&inc_dec_kp C_VOL_DN C_VOL_UP>; // RE1: volume down/up
-
-        };
-
-        layer_4 {
-			display-name = "SETTING";
-			bindings = <
-				&ccfg C_CPI_DN  &ccfg C_CPI_UP  &ccfg C_ROT_DN   &ccfg C_ROT_UP   &ccfg C_SCALE_TOG                  &bt BT_SEL 0   &bt BT_SEL 1    &bt BT_SEL 2  &bt BT_SEL 3  &bt BT_SEL 4
-				&ccfg C_SDIV_DN &ccfg C_SDIV_UP &ccfg C_SCRH_TOG &ccfg C_SCRV_TOG &none                              &bt BT_CLR     &bt BT_CLR_ALL  &none         &none         &none
-				&ccfg C_SAVE    &ccfg C_RESET   &none          &none          &none                 &none &none      &bootloader    &none           &none         &none         &none
-												                    &trans       &trans  &trans  &trans  &trans  &trans    &trans        &trans
-			>;
-
-            sensor-bindings =
-                <&inc_dec_kp LC(MINUS) LC(EQUAL)>, // RE0: ctrl + - / +,,,
-                <&inc_dec_kp C_VOL_DN C_VOL_UP>; // RE1: volume down/up
-
-        };
-    };
+/* --------------------------------------------------------------------------------
+* Layer 2: 移動 & スクロール (右親指ホールド中)
+* 右手: 矢印 (HJKL) ＋ スクロール (U=上 / M=下)
+* 左手: Fキー (F1-F12)
+* -------------------------------------------------------------------------------- */
+raise_layer {
+bindings = <
+&kp F1 &kp F2 &kp F3 &kp F4 &kp F5 &kp F6 &msc SCRL_UP &kp UP &msc SCRL_DOWN &kp F10
+&kp ESC &trans &trans &trans &trans &kp LEFT &kp DOWN &kp UP &kp RIGHT &kp F11
+&trans &trans &trans &trans &trans &kp HOME &kp PG_DN &kp PG_UP &kp END &kp F12
+&trans &trans &trans &trans &trans &trans &trans &trans
+>;
+};
+};
 };
